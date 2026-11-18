@@ -16,7 +16,7 @@ import pkg from "../package.json"
 import { Script } from "@synsci/script"
 import { assertLinuxArm64PageSize } from "./linux-arm64-page-size"
 import { nativePackageName } from "./native-targets"
-import { buildOptions, headlessAssets } from "./build-options"
+import { buildOptions, headlessAssets, nativeAddonDefines } from "./build-options"
 
 const options = buildOptions(process.argv.slice(2))
 if (options.headless && Script.release)
@@ -103,6 +103,7 @@ for (const item of options.targets) {
     entrypoints: ["./src/bootstrap.ts"],
     define: {
       ...keyDefines,
+      ...nativeAddonDefines,
       OPENSCIENCE_VERSION: `'${Script.version}'`,
       OPENSCIENCE_CHANNEL: `'${Script.channel}'`,
       OPENSCIENCE_LIBC: item.os === "linux" ? `'${item.abi ?? "glibc"}'` : "",

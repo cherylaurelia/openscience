@@ -27,6 +27,14 @@ export function buildOptions(args: string[], host = { os: process.platform as st
   return { headless, targets, output: headless ? "dist/headless" : "dist" }
 }
 
+/** cbor-x (via modal) looks for its native addon under the build machine's
+ * node_modules path, which a compiled binary never contains. On macOS that path
+ * is /home/runner/..., an automount, and Bun's require() of it blocks on a
+ * privacy prompt, so every command hangs when no one can answer it. */
+export const nativeAddonDefines = {
+  "process.env.CBOR_NATIVE_ACCELERATION_DISABLED": JSON.stringify("true"),
+}
+
 /** Resolve before reading a previously generated manifest, so a headless build
  * never embeds stale web assets or requires the frontend directory to exist. */
 export function headlessAssets(root: string): BunPlugin {
